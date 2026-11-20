@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dakota Provisions — Mobile Culinary & POS Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dakota">
+
+  <!-- Desktop Controls Bar (Simulator Environment) -->
+  <header class="app-environment-bar">
+    <div class="env-brand">
+      <img src="logo.png" alt="Dakota Provisions" class="env-logo-img">
+      <div class="brand-meta">
+        <strong>Dakota Provisions</strong>
+        <small>Farmer Fresh, Where Great Food and Sustainable Farming Meats™</small>
+      </div>
+    </div>
+
+    <!-- Multi-Persona Role Switcher (Always inside mobile mock) -->
+    <div class="env-roles">
+      <span class="role-label">Active Role:</span>
+      <div class="role-pill-group" role="tablist">
+        <button class="role-pill" data-role="login" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+          Sign In
+        </button>
+        <button class="role-pill active" data-role="guest" role="tab" aria-selected="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Guest Tableside
+        </button>
+        <button class="role-pill" data-role="pos" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          Server POS
+          <span class="badge-dot" id="serverActiveOrdersBadge" style="display:none">0</span>
+        </button>
+        <button class="role-pill" data-role="kds" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v20M18 2v20M6 12h12"></path></svg>
+          Kitchen KDS
+          <span class="badge-pill" id="kdsBadgeCount">0</span>
+        </button>
+        <button class="role-pill" data-role="inventory" role="tab" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          86 Inventory
+          <span class="badge-alert" id="inventory86Badge" style="display:none">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Simulator Frame Status & Reset -->
+    <div class="env-actions">
+      <button class="env-btn" id="btnToggleAudio" title="Toggle Sound Feedback">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        <span id="audioIcon">Audio: ON</span>
+      </button>
+      <div class="mobile-only-badge" title="All screens locked strictly to mobile screen mockup">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#be8e37" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        <span>Mobile Screen Mock</span>
+      </div>
+      <button class="env-btn btn-reset" id="btnResetDemo" title="Reset Demo Data">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+        Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Mobile Device Wrapper (Strictly Framed & Centered) -->
+  <main class="device-stage">
+    <div class="mobile-phone-frame" id="phoneContainer">
+      <!-- Hardware Bezel / Notch / Dynamic Island -->
+      <div class="phone-speaker"></div>
+      <div class="dynamic-island" id="dynamicIsland">
+        <div class="island-collapsed">
+          <span class="island-dot pulse"></span>
+          <span class="island-title" id="islandText">Dakota Kitchen Live</span>
+        </div>
+        <div class="island-expanded" id="islandExpanded">
+          <div class="expanded-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#be8e37" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <div class="expanded-info">
+            <strong id="islandOrderTitle">Table #4 • Order Active</strong>
+            <span id="islandOrderStatus">Kitchen preparing your craft proteins</span>
+          </div>
+          <span class="expanded-timer" id="islandTimer">3:42</span>
+        </div>
+      </div>
+
+      <!-- Native Mobile Status Bar -->
+      <div class="phone-status-bar">
+        <span class="status-time" id="statusClock">9:41</span>
+        <div class="status-icons">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 18.25c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l.64-.64C7.93 20.26 9.88 21 12 21s4.07-.74 5.6-1.98l.64.64c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-.62-.64C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9zm0 4c2.76 0 5 2.24 5 5 0 1.18-.41 2.26-1.09 3.12l-1.46-1.46C14.78 13.29 15 12.67 15 12c0-1.66-1.34-3-3-3s-3 1.34-3 3c0 .67.22 1.29.55 1.66l-1.46 1.46C7.41 14.26 7 13.18 7 12c0-2.76 2.24-5 5-5z"></path></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"></path></svg>
+          <svg width="16" height="11" viewBox="0 0 24 14" fill="currentColor"><rect x="1" y="1" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect><rect x="3" y="3" width="12" height="8" rx="1"></rect><path d="M21 5v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        </div>
+      </div>
+
+      <!-- App Viewport Screen -->
+      <div class="phone-screen" id="appViewport">
+
+        <!-- ========================================== -->
+        <!-- VIEW 0: LOGIN & ONBOARDING JOURNEY         -->
+        <!-- ========================================== -->
+        <section class="app-view" id="viewLogin">
+          <div class="login-screen-wrap">
+            <div class="login-ambient-orb"></div>
+
+            <div class="login-brand-hero">
+              <img src="logo.png" alt="Dakota Provisions" class="login-brand-logo">
+              <div class="login-tagline-wrap">
+                <span class="login-tagline-badge">EST. HURON, SOUTH DAKOTA</span>
+                <p class="login-brand-slogan">Farmer fresh, where great food and sustainable farming meats™</p>
+              </div>
+            </div>
+
+            <!-- Login Segment Selector -->
+            <div class="login-glass-card">
+              <div class="login-segment-tabs" role="tablist">
+                <button class="login-seg-btn active" id="segBtnGuest" role="tab">Diner & Table</button>
+                <button class="login-seg-btn" id="segBtnStaff" role="tab">Staff Terminal</button>
+              </div>
+
+              <!-- Diner Login Panel -->
+              <div class="login-panel active" id="loginPanelGuest">
+                <div class="diner-welcome-meta">
+                  <h3>Welcome to the Smokehouse</h3>
+                  <p>Order artisan proteins, customize cuts, and track your kitchen ticket in real time.</p>
+                </div>
+
+                <div class="login-field-box">
+                  <label class="login-field-label">Assigned Seating / Table</label>
+                  <div class="login-table-input-wrap">
+                    <span class="table-prefix-icon">🪑</span>
+                    <input type="text" id="loginTableInput" class="login-text-input" value="Table #4 (Smokehouse Room)" readonly>
+                    <button class="btn-change-table" id="btnLoginChangeTable">Change</button>
+                  </div>
+                </div>
+
+                <div class="login-actions-stack">
+                  <button class="btn-login-primary" id="btnEnterAsGuest">
+                    <span>Enter Tableside Menu</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  </button>
+
+                  <button class="btn-login-apple" id="btnLoginApple">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.63 1.35-.57.65-.99 1.71-.87 2.74 1.01.08 2.03-.52 2.58-1.24z"></path></svg>
+                    <span>Sign in with Apple (Marcus V. • 420 pts)</span>
+                  </button>
+
+                  <button class="btn-login-qr" id="btnLoginScanQR">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect></svg>
+                    <span>Scan Table QR Code</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Staff Login Panel -->
+              <div class="login-panel" id="loginPanelStaff">
+                <div class="diner-welcome-meta">
+                  <h3>Staff Terminal Access</h3>
+                  <p>Select your team profile or enter your 4-digit POS / Kitchen access PIN.</p>
+                </div>
+
+                <!-- Fast Profile Select -->
+                <div class="staff-profiles-grid">
+                  <button class="staff-profile-card active" data-staff="sarah" data-role="pos">
+                    <div class="staff-avatar pos">SM</div>
+                    <div class="staff-info">
+                      <strong>Sarah M.</strong>
+                      <small>Floor Server (POS)</small>
+                    </div>
+                  </button>
+                  <button class="staff-profile-card" data-staff="dale" data-role="kds">
+                    <div class="staff-avatar kds">CD</div>
+                    <div class="staff-info">
+                      <strong>Chef Dale</strong>
+                      <small>Kitchen Expo (KDS)</small>
+                    </div>
+                  </button>
+                  <button class="staff-profile-card" data-staff="mike" data-role="inventory">
+                    <div class="staff-avatar inv">MP</div>
+                    <div class="staff-info">
+                      <strong>Mike P.</strong>
+                      <small>Pantry (86 Board)</small>
+                    </div>
+                  </button>
+                </div>
+
+                <!-- PIN Pad Simulation -->
+                <div class="staff-pin-box">
+                  <div class="pin-dots-row">
+                    <span class="pin-dot active"></span>
+                    <span class="pin-dot active"></span>
+                    <span class="pin-dot active"></span>
+                    <span class="pin-dot active"></span>
+                  </div>
+                  <small class="pin-hint">Authorized PIN: • • • • (Tap button below to launch)</small>
+                  <button class="btn-login-primary" id="btnStaffLoginLaunch">
+                    <span>Authorize & Launch Terminal</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Provenance Footer -->
+            <div class="login-footer-meta">
+              <span>100% GAP Certified Poultry</span>
+              <span>•</span>
+              <span>No Antibiotics Ever</span>
+              <span>•</span>
+              <span>Huron, SD</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: GUEST TABLE-SIDE & MENU EXPERIENCE -->
+        <!-- ========================================== -->
+        <section class="app-view active" id="viewGuest">
+          <!-- Top App Header with Glass Branding & Profile Control -->
+          <div class="screen-header glass-header">
+            <div class="header-left">
+              <div class="brand-crest-thumb">
+                <img src="logo.png" alt="DP" class="crest-mini-logo">
+              </div>
+              <div class="header-titles">
+                <span class="brand-tagline">Dakota Provisions</span>
+                <button class="table-selector-pill glass-pill" id="btnSelectTable">
+                  <span class="pulse-indicator"></span>
+                  <span id="currentTableLabel">Table #4 • Smokehouse Room</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+              </div>
+            </div>
+            <div class="header-actions">
+              <button class="icon-btn glass-btn" id="btnOpenLoyalty" title="Provisions Rewards">
+                <span class="icon-badge" id="loyaltyPtsBadge">420</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </button>
+              <button class="icon-btn glass-btn" id="btnLogoutToLogin" title="Switch User / Sign Out">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Live Menu Search Bar (Clear Upon Opening) -->
+          <div class="menu-search-strip">
+            <div class="search-input-wrap glass-card">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="menuSearchInput" class="menu-search-box" placeholder="Search artisan proteins, cuts, sides...">
+              <button class="btn-clear-search" id="btnClearSearch" style="display:none;">&times;</button>
+            </div>
+          </div>
+
+          <!-- Category Navigation Tabs (Immediate, High Legibility) -->
+          <div class="category-scroll-bar" role="tablist">
+            <button class="cat-pill active" data-cat="all">All Specialties</button>
+            <button class="cat-pill" data-cat="deli">Signature Deli</button>
+            <button class="cat-pill" data-cat="smokehouse">Smokehouse Cuts</button>
+            <button class="cat-pill" data-cat="bowls">Artisan Bowls</button>
+            <button class="cat-pill" data-cat="griddle">Griddle & Sliders</button>
+            <button class="cat-pill" data-cat="sides">Craft Sides & Drinks</button>
+          </div>
+
+          <!-- Live 86 / Out of Stock Banner Notice (Dynamically shown) -->
+          <div class="global-stock-alert glass-alert" id="globalStockAlert" style="display:none;">
+            <div class="alert-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <div class="alert-content">
+              <strong>Kitchen Inventory Notice:</strong>
+              <span id="globalStockAlertMsg">Some specialty items are currently 86'd.</span>
+            </div>
+          </div>
+
+          <!-- Active Table Order Status Card (When an order is in progress) -->
+          <div class="active-order-tracker-card glass-card" id="guestOrderTracker" style="display:none;">
+            <div class="tracker-top">
+              <div class="tracker-info">
+                <span class="tracker-badge" id="trackerStatusBadge">In Preparation</span>
+                <strong id="trackerOrderNumber">Order #DP-104</strong>
+              </div>
+              <div class="tracker-timer" id="trackerTimerDisplay">04:12</div>
+            </div>
+            <div class="tracker-progress-bar">
+              <div class="progress-fill" id="trackerProgressFill" style="width: 50%;"></div>
+            </div>
+            <div class="tracker-steps">
+              <span class="step-point done">Sent</span>
+              <span class="step-point done" id="stepPrep">Prepping</span>
+              <span class="step-point" id="stepReady">Plated</span>
+              <span class="step-point" id="stepServed">Served</span>
+            </div>
+          </div>
+
+          <!-- Digital Menu Items Grid (Prominently Clear & Scannable) -->
+          <div class="menu-list-container" id="menuItemsContainer">
+            <!-- Dynamically populated via app.js -->
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: SERVER HANDHELD POS & FLOOR PLAN   -->
+        <!-- ========================================== -->
+        <section class="app-view" id="viewPOS">
+          <div class="screen-header glass-header">
+            <div class="header-left">
+              <div class="brand-avatar pos-mode">
+                <span>POS</span>
+              </div>
+              <div class="header-titles">
+                <span class="brand-tagline">Dakota Floor Terminal</span>
+                <strong>Handheld Waitstaff & Register</strong>
+              </div>
+            </div>
+            <div class="header-actions">
+              <button class="pill-btn pos-action-btn" id="btnQuickNewOrder">
+                + New Table
+              </button>
+            </div>
+          </div>
+
+          <!-- Floor Plan Mode Switcher -->
+          <div class="pos-section-switch glass-card">
+            <button class="pos-subtab active" data-postab="tables">Table Map (12)</button>
+            <button class="pos-subtab" data-postab="activeChecks">Open Checks (<span id="openChecksCount">0</span>)</button>
+            <button class="pos-subtab" data-postab="history">Completed (<span id="settledCount">0</span>)</button>
+          </div>
+
+          <!-- Subtab: Table Map -->
+          <div class="pos-tab-content active" id="posTabTables">
+            <div class="floor-legend glass-card">
+              <span class="legend-item"><span class="legend-dot vacant"></span> Vacant</span>
+              <span class="legend-item"><span class="legend-dot seated"></span> Seated</span>
+              <span class="legend-item"><span class="legend-dot ordering"></span> Kitchen Active</span>
+              <span class="legend-item"><span class="legend-dot billed"></span> Payment Due</span>
+            </div>
+
+            <div class="tables-grid" id="tablesGridContainer">
+              <!-- Dynamically populated tables 1-12 -->
+            </div>
+          </div>
+
+          <!-- Subtab: Active Checks & Split POS -->
+          <div class="pos-tab-content" id="posTabChecks">
+            <div class="open-checks-list" id="openChecksContainer">
+              <!-- Dynamically populated open checks -->
+            </div>
+          </div>
+
+          <!-- Subtab: Settlement & Receipt History -->
+          <div class="pos-tab-content" id="posTabHistory">
+            <div class="settled-checks-list" id="settledChecksContainer">
+              <!-- Dynamically populated completed checks -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: KITCHEN DISPLAY SYSTEM (KDS)       -->
+        <!-- ========================================== -->
+        <section class="app-view" id="viewKDS">
+          <div class="screen-header glass-header kds-header">
+            <div class="header-left">
+              <div class="brand-avatar kds-mode">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v20M18 2v20M6 12h12"></path></svg>
+              </div>
+              <div class="header-titles">
+                <span class="brand-tagline">Dakota Smokehouse Expo</span>
+                <strong id="kdsActiveTicketHeader">KDS Station • 0 Tickets</strong>
+              </div>
+            </div>
+            <div class="header-actions">
+              <button class="icon-btn glass-btn" id="btnKdsMuteBell" title="Sound notifications">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- KDS Filter Pills -->
+          <div class="kds-filter-bar">
+            <button class="kds-filter active" data-filter="all">All Active (<span id="kdsFilterAll">0</span>)</button>
+            <button class="kds-filter" data-filter="new">New (<span id="kdsFilterNew">0</span>)</button>
+            <button class="kds-filter" data-filter="prep">In Prep (<span id="kdsFilterPrep">0</span>)</button>
+            <button class="kds-filter" data-filter="ready">Ready to Serve (<span id="kdsFilterReady">0</span>)</button>
+          </div>
+
+          <!-- KDS Ticket Columns / Carousel -->
+          <div class="kds-board" id="kdsBoardContainer">
+            <!-- Dynamic Kitchen Tickets -->
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: INGREDIENT AVAILABILITY & 86 BOARD -->
+        <!-- ========================================== -->
+        <section class="app-view" id="viewInventory">
+          <div class="screen-header glass-header">
+            <div class="header-left">
+              <div class="brand-avatar inv-mode">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+              </div>
+              <div class="header-titles">
+                <span class="brand-tagline">Provisions Pantry Live</span>
+                <strong>Ingredient Stock & 86 Monitor</strong>
+              </div>
+            </div>
+            <div class="header-actions">
+              <button class="pill-btn" id="btnRestockAll">Restock All</button>
+            </div>
+          </div>
+
+          <div class="inv-summary-banner glass-card">
+            <div class="inv-summary-item">
+              <span class="inv-sum-num text-success" id="invInStockCount">16</span>
+              <span class="inv-sum-label">In Stock</span>
+            </div>
+            <div class="inv-summary-item">
+              <span class="inv-sum-num text-warning" id="invLowStockCount">2</span>
+              <span class="inv-sum-label">Low Reserve</span>
+            </div>
+            <div class="inv-summary-item">
+              <span class="inv-sum-num text-danger" id="inv86Count">1</span>
+              <span class="inv-sum-label">86'd (Locked)</span>
+            </div>
+          </div>
+
+          <p class="inv-tip glass-card">
+            💡 Toggling an ingredient to <strong>86'd</strong> immediately disables it in the digital menu and customization drawers in real time!
+          </p>
+
+          <div class="inventory-categories" id="inventoryListContainer">
+            <!-- Dynamically populated ingredient cards -->
+          </div>
+        </section>
+
+        <!-- Bottom Cart Summary Bar (Guest View Only) -->
+        <div class="guest-cart-dock glass-dock" id="guestCartDock" style="display:none;">
+          <div class="cart-dock-info">
+            <div class="cart-dock-count">
+              <span id="cartTotalItems">0</span> items
+            </div>
+            <div class="cart-dock-price" id="cartTotalPrice">$0.00</div>
+          </div>
+          <button class="btn-primary-dock" id="btnOpenCartDrawer">
+            <span>View Table Order</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+
+        <!-- Mobile Bottom Tab Navigation -->
+        <nav class="app-bottom-nav glass-nav">
+          <button class="nav-tab active" data-target="viewGuest">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Deli Menu</span>
+          </button>
+          <button class="nav-tab" data-target="viewPOS">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>Server POS</span>
+          </button>
+          <button class="nav-tab" data-target="viewKDS">
+            <div class="nav-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v20M18 2v20M6 12h12"></path></svg>
+              <span class="nav-badge" id="navKdsBadge" style="display:none">0</span>
+            </div>
+            <span>Kitchen KDS</span>
+          </button>
+          <button class="nav-tab" data-target="viewInventory">
+            <div class="nav-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              <span class="nav-badge danger" id="nav86Badge" style="display:none">!</span>
+            </div>
+            <span>86 Stock</span>
+          </button>
+        </nav>
+
+        <!-- Native Home Indicator Bar -->
+        <div class="home-indicator"></div>
+
+      </div><!-- /phone-screen -->
+
+      <!-- ========================================== -->
+      <!-- MODALS & DRAWERS (SLIDE-UP SHEETS)         -->
+      <!-- ========================================== -->
+
+  <!-- DRAWER 1: ITEM CUSTOMIZATION MODAL SHEET -->
+  <div class="sheet-backdrop" id="customizationBackdrop">
+    <div class="sheet-drawer glass-drawer" id="customizationDrawer">
+      <div class="sheet-drag-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-header-meta">
+          <span class="sheet-kicker" id="customModalCategory">Signature Deli</span>
+          <h3 class="sheet-title" id="customModalTitle">The Huron Harvest Club</h3>
+          <div class="sheet-price" id="customModalPrice">$16.50</div>
+        </div>
+        <button class="sheet-close-btn" id="btnCloseCustomDrawer">&times;</button>
+      </div>
+
+      <div class="sheet-scroll-body">
+        <div class="sheet-item-media" id="customModalImage"></div>
+        <p class="sheet-description" id="customModalDescription">
+          Shaved GAP-certified oven-roasted smoked turkey breast, thick-cut maple turkey bacon, sharp white cheddar, crisp leaf lettuce, heirloom tomato, and artisan rosemary herb aioli.
+        </p>
+
+        <!-- Seat Selection -->
+        <div class="form-group-card glass-card">
+          <label class="form-section-title">Assign to Seat</label>
+          <div class="seat-selector-pills">
+            <label class="seat-pill">
+              <input type="radio" name="orderSeat" value="Seat 1" checked>
+              <span>Seat 1</span>
+            </label>
+            <label class="seat-pill">
+              <input type="radio" name="orderSeat" value="Seat 2">
+              <span>Seat 2</span>
+            </label>
+            <label class="seat-pill">
+              <input type="radio" name="orderSeat" value="Seat 3">
+              <span>Seat 3</span>
+            </label>
+            <label class="seat-pill">
+              <input type="radio" name="orderSeat" value="Shared Table">
+              <span>Shared</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Customizer Options Generated Dynamically (Breads, Cheeses, Protein Styles, Add-ons) -->
+        <div id="dynamicCustomizerOptions">
+          <!-- Populated from menu schema -->
+        </div>
+
+        <!-- Special Kitchen Notes -->
+        <div class="form-group-card glass-card">
+          <label class="form-section-title" for="customSpecialNotes">Special Instructions / Allergies</label>
+          <input type="text" id="customSpecialNotes" class="modern-input" placeholder="e.g. Extra crisp bacon, sauce on side...">
+        </div>
+      </div>
+
+      <!-- Drawer Footer with Quantity and Add Button -->
+      <div class="sheet-footer glass-footer">
+        <div class="qty-counter">
+          <button class="qty-btn" id="btnCustomQtyMinus">-</button>
+          <span class="qty-number" id="customQtyValue">1</span>
+          <button class="qty-btn" id="btnCustomQtyPlus">+</button>
+        </div>
+        <button class="btn-primary-action" id="btnAddToCartConfirm">
+          <span>Add to Table Order</span>
+          <span id="customModalAddTotal">$16.50</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER 2: TABLE CART & ORDER SUBMISSION -->
+  <div class="sheet-backdrop" id="cartBackdrop">
+    <div class="sheet-drawer glass-drawer" id="cartDrawer">
+      <div class="sheet-drag-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-kicker" id="cartDrawerTableLabel">Table #4</span>
+          <h3 class="sheet-title">Current Table Order</h3>
+        </div>
+        <button class="sheet-close-btn" id="btnCloseCartDrawer">&times;</button>
+      </div>
+
+      <div class="sheet-scroll-body">
+        <div class="cart-items-list" id="cartItemsList">
+          <!-- Dynamically populated cart items -->
+        </div>
+
+        <!-- Table Summary Breakdown -->
+        <div class="cart-cost-summary glass-card">
+          <div class="cost-row">
+            <span>Subtotal</span>
+            <span id="cartSubtotal">$0.00</span>
+          </div>
+          <div class="cost-row">
+            <span>SD State & Local Tax (6.5%)</span>
+            <span id="cartTax">$0.00</span>
+          </div>
+          <div class="cost-row loyalty-discount-row" id="cartLoyaltyRow" style="display:none;">
+            <span>Provisions Club Reward</span>
+            <span class="discount-val" id="cartLoyaltyDiscount">-$0.00</span>
+          </div>
+          <div class="cost-row total-row">
+            <strong>Table Total</strong>
+            <strong class="total-val" id="cartFinalTotal">$0.00</strong>
+          </div>
+          <div class="loyalty-earn-preview">
+            🎉 You will earn <strong id="cartPointsEarned">0</strong> Dakota Rewards points on this order!
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet-footer glass-footer stack-footer">
+        <button class="btn-primary-action" id="btnSendOrderToKitchen">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <span>Send Order to Kitchen (KDS)</span>
+        </button>
+        <button class="btn-secondary-action" id="btnOpenCheckoutFromCart">
+          <span>Pay & Settle Check (POS)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER 3: TABLE SELECTOR & QR SCAN SIMULATOR -->
+  <div class="sheet-backdrop" id="tableSelectorBackdrop">
+    <div class="sheet-drawer glass-drawer" id="tableSelectorDrawer">
+      <div class="sheet-drag-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-kicker">Location Service</span>
+          <h3 class="sheet-title">Select or Scan Table</h3>
+        </div>
+        <button class="sheet-close-btn" id="btnCloseTableDrawer">&times;</button>
+      </div>
+
+      <div class="sheet-scroll-body">
+        <!-- QR Code Simulation -->
+        <div class="qr-scanner-card glass-card" id="qrScannerCard">
+          <div class="qr-target-box">
+            <div class="qr-laser-line"></div>
+            <div class="qr-corner top-left"></div>
+            <div class="qr-corner top-right"></div>
+            <div class="qr-corner bottom-left"></div>
+            <div class="qr-corner bottom-right"></div>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#be8e37" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          </div>
+          <p class="qr-text">Point camera at the wooden table stand QR sticker</p>
+          <button class="btn-outline-pill" id="btnSimulateScan">Simulate QR Scan (Table #4)</button>
+        </div>
+
+        <div class="or-divider"><span>OR SELECT MANUALLY</span></div>
+
+        <!-- Manual Table Grid -->
+        <div class="modal-tables-grid" id="modalTablesGrid">
+          <!-- Tables 1 to 12 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER 4: LOYALTY & REWARDS WALLET ("DAKOTA PROVISIONS CLUB") -->
+  <div class="sheet-backdrop" id="loyaltyBackdrop">
+    <div class="sheet-drawer glass-drawer" id="loyaltyDrawer">
+      <div class="sheet-drag-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-kicker">Provisions Club</span>
+          <h3 class="sheet-title">Dakota Rewards Wallet</h3>
+        </div>
+        <button class="sheet-close-btn" id="btnCloseLoyaltyDrawer">&times;</button>
+      </div>
+
+      <div class="sheet-scroll-body">
+        <!-- Membership Card -->
+        <div class="loyalty-card-vip">
+          <div class="card-vip-top">
+            <span class="vip-brand">DAKOTA PROVISIONS</span>
+            <span class="vip-tier-badge" id="loyaltyTierBadge">Artisan Member</span>
+          </div>
+          <div class="vip-member-name">Marcus Vance</div>
+          <div class="vip-points-row">
+            <div class="vip-pts-count">
+              <span class="pts-big" id="loyaltyPtsDisplay">420</span>
+              <span class="pts-label">Reward Points</span>
+            </div>
+            <div class="vip-code-sim">
+              <div class="sim-barcode">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <small>#DK-8842-SD</small>
+            </div>
+          </div>
+          <div class="tier-progress-track">
+            <div class="tier-bar-fill" style="width: 70%;"></div>
+          </div>
+          <small class="tier-hint">80 pts to Pitmaster Executive Tier ($25 bonus credit)</small>
+        </div>
+
+        <!-- Redeemable Perks & Vouchers -->
+        <h4 class="perks-heading">Redeemable Provisions Perks</h4>
+        <div class="perks-list">
+          <div class="perk-card glass-card">
+            <div class="perk-left">
+              <span class="perk-icon">🎟️</span>
+              <div class="perk-info">
+                <strong>$5 Off Farmhouse Entrée</strong>
+                <small>150 Points • Valid on all plates</small>
+              </div>
+            </div>
+            <button class="btn-redeem" data-pts="150" data-discount="5.00" data-code="FARM5">
+              Redeem 150p
+            </button>
+          </div>
+
+          <div class="perk-card glass-card">
+            <div class="perk-left">
+              <span class="perk-icon">🍔</span>
+              <div class="perk-info">
+                <strong>Free Smoked Turkey Sliders</strong>
+                <small>300 Points • 2-pack signature glaze</small>
+              </div>
+            </div>
+            <button class="btn-redeem" data-pts="300" data-discount="12.00" data-code="SLIDERSFREE">
+              Redeem 300p
+            </button>
+          </div>
+
+          <div class="perk-card glass-card">
+            <div class="perk-left">
+              <span class="perk-icon">🥤</span>
+              <div class="perk-info">
+                <strong>Free Huron Craft Tap Beverage</strong>
+                <small>100 Points • Artisan soda or tea</small>
+              </div>
+            </div>
+            <button class="btn-redeem" data-pts="100" data-discount="4.50" data-code="CRAFTFREE">
+              Redeem 100p
+            </button>
+          </div>
+        </div>
+
+        <!-- Earn More Points Guide -->
+        <div class="earn-guide-box glass-card">
+          <strong>How You Earn</strong>
+          <ul>
+            <li>Earn 10 points for every $1 spent table-side</li>
+            <li>Double points on all GAP-certified turkey cuts on Tuesdays</li>
+            <li>Free birthday smokehouse sampler platter</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER 5: INTEGRATED POINT-OF-SALE (POS) CHECKOUT & SPLIT BILL -->
+  <div class="sheet-backdrop" id="posCheckoutBackdrop">
+    <div class="sheet-drawer glass-drawer pos-checkout-drawer" id="posCheckoutDrawer">
+      <div class="sheet-drag-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-kicker" id="posCheckoutTableNum">Table #4 POS Terminal</span>
+          <h3 class="sheet-title">Settle & Process Payment</h3>
+        </div>
+        <button class="sheet-close-btn" id="btnClosePosCheckout">&times;</button>
+      </div>
+
+      <div class="sheet-scroll-body">
+        <!-- Split Check Options -->
+        <div class="pos-split-block glass-card">
+          <label class="form-section-title">Split Check Method</label>
+          <div class="split-pills">
+            <button class="split-pill active" data-split="single">Single Check</button>
+            <button class="split-pill" data-split="seat">Split by Seat</button>
+            <button class="split-pill" data-split="equal">Split Evenly (2-4)</button>
+          </div>
+
+          <div class="split-details-box" id="splitDetailsBox" style="display:none;">
+            <!-- Rendered dynamically if split active -->
+          </div>
+        </div>
+
+        <!-- Current Charge Summary -->
+        <div class="pos-due-box glass-card">
+          <span class="due-label">Current Amount Due</span>
+          <h2 class="due-amount" id="posDueAmount">$0.00</h2>
+        </div>
+
+        <!-- Gratuity / Tip Selector -->
+        <div class="pos-tip-section">
+          <label class="form-section-title">Add Gratuity for Smokehouse Staff</label>
+          <div class="tip-options-grid">
+            <button class="tip-btn glass-btn" data-tip="15">15%<br><small id="tipAmt15">$0.00</small></button>
+            <button class="tip-btn glass-btn active" data-tip="18">18%<br><small id="tipAmt18">$0.00</small></button>
+            <button class="tip-btn glass-btn" data-tip="20">20%<br><small id="tipAmt20">$0.00</small></button>
+            <button class="tip-btn glass-btn" data-tip="25">25%<br><small id="tipAmt25">$0.00</small></button>
+          </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div class="pos-payment-methods">
+          <label class="form-section-title">Select Payment Instrument</label>
+          <div class="pay-methods-grid">
+            <button class="pay-method-btn glass-btn active" data-method="nfc">
+              <span class="pay-icon">📱</span>
+              <strong>Tap to Pay</strong>
+              <small>Apple Pay / Google Pay</small>
+            </button>
+            <button class="pay-method-btn glass-btn" data-method="chip">
+              <span class="pay-icon">💳</span>
+              <strong>EMV Chip</strong>
+              <small>Insert Card</small>
+            </button>
+            <button class="pay-method-btn glass-btn" data-method="cash">
+              <span class="pay-icon">💵</span>
+              <strong>Cash</strong>
+              <small>Floor Staff</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulated Terminal Card Reader Screen -->
+        <div class="terminal-simulator-card glass-card" id="terminalSimulator">
+          <div class="terminal-screen" id="terminalScreen">
+            <div class="terminal-nfc-waves">
+              <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+            </div>
+            <strong id="terminalPrompt">Hold Device Near Screen</strong>
+            <small id="terminalSubprompt">Ready for Contactless EMV</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet-footer glass-footer">
+        <button class="btn-pos-charge" id="btnProcessPayment">
+          <span>Authorize & Charge</span>
+          <span id="posChargeBtnTotal">$0.00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER 6: DIGITAL ITEMIZE RECEIPT & SETTLEMENT -->
+  <div class="sheet-backdrop" id="receiptBackdrop">
+    <div class="sheet-drawer glass-drawer" id="receiptDrawer">
+      <div class="sheet-drag-handle"></div>
+      <div class="sheet-header">
+        <div>
+          <span class="sheet-kicker">Transaction Complete</span>
+          <h3 class="sheet-title">Digital Guest Receipt</h3>
+        </div>
+        <button class="sheet-close-btn" id="btnCloseReceiptDrawer">&times;</button>
+      </div>
+
+      <div class="sheet-scroll-body">
+        <div class="receipt-paper" id="receiptPaper">
+          <div class="receipt-brand-header">
+            <img src="logo.png" alt="Dakota Provisions" class="receipt-logo-img">
+            <p>Huron, South Dakota • Smokehouse Taproom</p>
+            <p>Tel: (605) 352-1200 • dakotaprovisions.com</p>
+          </div>
+
+          <div class="receipt-meta-grid">
+            <div><strong>Table:</strong> <span id="recTableNum">#4</span></div>
+            <div><strong>Server:</strong> Sarah M.</div>
+            <div><strong>Date:</strong> <span id="recDate">Nov 19, 2026</span></div>
+            <div><strong>Time:</strong> <span id="recTime">5:42 PM</span></div>
+            <div><strong>Order:</strong> <span id="recOrderNum">#DP-104</span></div>
+            <div><strong>Auth:</strong> <span id="recAuth">APP-89421</span></div>
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <div class="receipt-items-table" id="recItemsList">
+            <!-- Items rendered -->
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <div class="receipt-totals-block">
+            <div class="rec-row"><span>Subtotal:</span><span id="recSubtotal">$0.00</span></div>
+            <div class="rec-row"><span>Tax (6.5%):</span><span id="recTax">$0.00</span></div>
+            <div class="rec-row"><span>Tip:</span><span id="recTip">$0.00</span></div>
+            <div class="rec-row rec-grand-total"><strong>TOTAL PAID:</strong><strong id="recTotal">$0.00</strong></div>
+            <div class="rec-row"><span id="recMethod">Apple Pay (Mastercard ...4492)</span><span>APPROVED</span></div>
+          </div>
+
+          <div class="receipt-divider"></div>
+
+          <div class="receipt-loyalty-footer">
+            <p>Points Earned: <strong id="recPointsEarned">+185 pts</strong></p>
+            <p>New Rewards Balance: <strong id="recNewBalance">605 pts</strong></p>
+            <small>Thank you for supporting independent family turkey growers!</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet-footer glass-footer stack-footer">
+        <button class="btn-primary-action" id="btnPrintReceipt">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          <span>Print / Save Receipt</span>
+        </button>
+        <button class="btn-secondary-action" id="btnFinishTable">
+          <span>Close & Clear Table for Next Guest</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+    </div><!-- /mobile-phone-frame -->
+  </main>
+
+  <!-- Audio Synthesis & Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
